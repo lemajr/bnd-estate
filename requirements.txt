@@ -1,0 +1,6 @@
+Django==5.1.5
+python-decouple
+djangorestframework
+markdown 
+django-filter 
+cloudinary
