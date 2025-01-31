@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'api',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -103,6 +105,8 @@ cloudinary.config(
     api_secret=config('CLOUDINARY_API_SECRET_KEY'),
     secure=True
 )
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
