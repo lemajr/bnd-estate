@@ -1,25 +1,36 @@
-# Use a lightweight Python image
-FROM python:3.11-slim AS base
+# Stage 1: Build stage
+FROM python:3.11-slim AS builder
 
-# Set environment variables to avoid buffer issues
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies for PostgreSQL and build tools
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpq-dev gcc && \
+    gcc libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements.txt first to leverage Docker cache
+# Copy requirements and install dependencies
 COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Install dependencies in a virtual environment
-RUN pip install --no-cache-dir -r requirements.txt
+# Stage 2: Final stage
+FROM python:3.11-slim
 
-# Copy the rest of the Django app files
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Set working directory
+WORKDIR /app
+
+# Copy installed dependencies from the builder stage
+COPY --from=builder /root/.local /root/.local
 COPY . .
+
+# Ensure scripts in .local are usable
+ENV PATH=/root/.local/bin:$PATH
 
 # Expose the port Django runs on
 EXPOSE 8000

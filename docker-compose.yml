@@ -2,18 +2,18 @@ version: '3.9'
 
 services:
   db:
-    image: postgres:15
+    image: mongo:6.0
     container_name: blackwill_db
     restart: always
     env_file: .env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mongo_data:/data/db
     ports:
-      - "5432:5432"
+      - "27017:27017"
 
   web:
     build: .
@@ -28,4 +28,4 @@ services:
       - "8000:8000"
 
 volumes:
-  postgres_data:
+  mongo_data:
