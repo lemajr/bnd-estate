@@ -68,6 +68,8 @@ CORS_ALLOWED_ORIGINS = [
 
 ]
 
+ALLOWED_HOSTS = ['bnd-estate-production.up.railway.app', 'localhost', '127.0.0.1']
+
 
 CORS_ALLOW_CREDENTIALS = True
 
