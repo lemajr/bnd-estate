@@ -64,8 +64,10 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow Next.js frontend
-    'https://blackwillcotz-lemajr-projects.vercel.app'
+    'https://blackwillcotz-lemajr-projects.vercel.app',
+
 ]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
