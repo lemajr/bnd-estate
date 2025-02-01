@@ -3,5 +3,5 @@ from .models import Property
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'city', 'country', 'address', 'created_at')
+    list_display = ('title', 'price', 'city', 'country', 'created_at')
     search_fields = ('title', 'city', 'country', 'user_email')

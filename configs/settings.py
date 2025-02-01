@@ -15,6 +15,7 @@ from decouple import config
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,17 +47,28 @@ INSTALLED_APPS = [
     'api',
     'cloudinary',
     'cloudinary_storage',
+    "django_countries",
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Allow Next.js frontend
+    'https://blackwillcotz-lemajr-projects.vercel.app'
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'configs.urls'
 
@@ -90,13 +102,24 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('POSTGRES_DB', 'estate_db'),
+        'USER': config('POSTGRES_USER', 'lemajr'),
+        'PASSWORD': config('POSTGRES_PASSWORD', 'lemajr'),
+        'HOST': config('POSTGRES_HOST', 'db'), 
+        'PORT': config('POSTGRES_PORT', '5432'),
     }
 }
-
 
 # Cloudinary configuration
 cloudinary.config(
@@ -143,6 +166,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
