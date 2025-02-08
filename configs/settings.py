@@ -15,6 +15,7 @@ from decouple import config
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -104,9 +105,23 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+from decouple import config
+
 DATABASES = {
-     "default": config("DATABASE_URL", default="")
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('NEON_DATABASE_NAME'),  
+        'USER': config('NEON_USER'), 
+        'PASSWORD': config('NEON_PASSWORD'),  
+        'HOST': config('NEON_HOST'),  
+        'PORT': config('NEON_PORT', default='5432'),  
+        'OPTIONS': {
+            'sslmode': 'require',  # Ensure SSL is used
+        },
+    }
 }
+
 
 
 # Cloudinary configuration
