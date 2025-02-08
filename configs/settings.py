@@ -28,7 +28,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -63,12 +63,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Allow Next.js frontend
-    'https://blackwillcotz-lemajr-projects.vercel.app',
+    "http://localhost:3000",  
+    'https://blackwill.co.tz',
 
 ]
-
-ALLOWED_HOSTS = ['bnd-estate-production.up.railway.app', 'localhost', '127.0.0.1']
 
 
 CORS_ALLOW_CREDENTIALS = True
