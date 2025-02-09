@@ -13,3 +13,4 @@ gunicorn==20.1.0
 mongoengine
 whitenoise
 psycopg2-binary==2.9.10
+django-unfold

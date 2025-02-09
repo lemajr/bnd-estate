@@ -29,13 +29,14 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app']
+# ALLOWED_HOSTS = ['.vercel.app']
 
-# ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = ['*']  
 
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +53,13 @@ INSTALLED_APPS = [
     'corsheaders',
 
 ]
+
+UNFOLD = {
+    "SITE_TITLE": "🏡 Blackwill Admin",
+    "SITE_HEADER": "Blackwill Administration",
+    "SITE_URL": "https://blackwill.co.tz",  
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
