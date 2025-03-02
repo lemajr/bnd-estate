@@ -15,3 +15,49 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.address}, {self.city}, {self.country.name}"
+
+class Visitor(models.Model):
+    username = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+
+class Like(models.Model):
+    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('visitor', 'property')
+
+    def __str__(self):
+        return f"{self.visitor.username} liked {self.property.title}"
+
+class Booking(models.Model):
+    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    booking_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.visitor.username} booked {self.property.title} on {self.booking_date}"
+
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
+
+class InTouchMessage(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message from {self.first_name} {self.last_name}"

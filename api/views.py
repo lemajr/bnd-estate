@@ -2,8 +2,11 @@ from rest_framework import viewsets
 from .models import Property
 from .serializers import PropertySerializer
 from django.http import HttpResponse
+from rest_framework import viewsets
+from .models import Property, Visitor, Like, Booking, Subscriber, InTouchMessage
+from .serializers import PropertySerializer, VisitorSerializer, LikeSerializer, BookingSerializer, SubscriberSerializer, InTouchMessageSerializer
+from rest_framework.permissions import AllowAny
 
-from django.http import HttpResponse
 
 def root_page(request):
     return HttpResponse(
@@ -80,7 +83,31 @@ def root_page(request):
     )
 
 
+
 class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
+
+class VisitorViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]  
+
+    queryset = Visitor.objects.all()
+    serializer_class = VisitorSerializer
+
+class LikeViewSet(viewsets.ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+class SubscriberViewSet(viewsets.ModelViewSet):
+    queryset = Subscriber.objects.all()
+    serializer_class = SubscriberSerializer
+
+class InTouchMessageViewSet(viewsets.ModelViewSet):
+    queryset = InTouchMessage.objects.all()
+    serializer_class = InTouchMessageSerializer
+
 

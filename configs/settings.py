@@ -45,13 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-party apps
+    'corsheaders',
     'rest_framework',
     'api',
     'cloudinary',
     'cloudinary_storage',
     "django_countries",
-    'corsheaders',
-
 ]
 
 UNFOLD = {
@@ -60,6 +59,13 @@ UNFOLD = {
     "SITE_URL": "https://blackwill.co.tz",  
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  
+    'https://blackwill.co.tz',
+    "https://www.blackwill.co.tz",
+]
+
+CORS_ALLOW_CREDENTIALS = True #should be set to True for the frontend to access the backend
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,14 +79,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
-    'https://blackwill.co.tz',
-    "https://www.blackwill.co.tz",
-]
 
 
-CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'configs.urls'
 
@@ -115,7 +115,6 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-from decouple import config
 
 DATABASES = {
     'default': {
