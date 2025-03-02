@@ -95,18 +95,24 @@ class VisitorViewSet(viewsets.ModelViewSet):
     serializer_class = VisitorSerializer
 
 class LikeViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]  
+
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
 class SubscriberViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]  
+
     queryset = Subscriber.objects.all()
     serializer_class = SubscriberSerializer
 
 class InTouchMessageViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = InTouchMessage.objects.all()
     serializer_class = InTouchMessageSerializer
 
