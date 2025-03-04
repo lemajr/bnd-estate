@@ -242,7 +242,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Prevent duplicate booking for the same visitor & property
+        # Prevent duplicate booking for the same visitor and property
         if Booking.objects.filter(
             visitor__id=request.data['visitor'],
             property__id=request.data['property']
