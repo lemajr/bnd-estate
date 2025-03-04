@@ -6,8 +6,9 @@ from rest_framework import viewsets
 from .models import Property, Visitor, Like, Booking, Subscriber, InTouchMessage
 from .serializers import PropertySerializer, VisitorSerializer, LikeSerializer, BookingSerializer, SubscriberSerializer, InTouchMessageSerializer
 from rest_framework.permissions import AllowAny
-
-
+from rest_framework.response import Response
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 def root_page(request):
     return HttpResponse(
         """
@@ -96,9 +97,115 @@ class VisitorViewSet(viewsets.ModelViewSet):
 
 class LikeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]  
-
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
+
+    def list(self, request, *args, **kwargs):
+        """GET /api/likes/ - Not intended for status checks, use /status/ instead"""
+        visitor_id = request.query_params.get('visitor')
+        property_id = request.query_params.get('property')
+
+        if visitor_id and property_id:
+            # Redirect to status action for consistency
+            return self.status(request)
+        else:
+            # Default list behavior (optional, or disable)
+            return Response(
+                {'error': 'Use /api/likes/status/ with visitor and property IDs'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=False, methods=['get'])
+    def status(self, request):
+        """GET /api/likes/status/?visitor=<id>&property=<id>"""
+        visitor_id = request.query_params.get('visitor')
+        property_id = request.query_params.get('property')
+
+        if not visitor_id or not property_id:
+            return Response(
+                {'error': 'Visitor and property IDs are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            is_liked = Like.objects.filter(
+                visitor__id=visitor_id,
+                property__id=property_id
+            ).exists()
+            print(f"Checked like: visitor={visitor_id}, property={property_id}, result={is_liked}")
+            return Response(is_liked, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error checking like: {e}")
+            return Response(
+                {'error': 'Something went wrong'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def create(self, request, *args, **kwargs):
+        """POST /api/likes/"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if Like.objects.filter(
+            visitor__id=request.data['visitor'],
+            property__id=request.data['property']
+        ).exists():
+            return Response({'error': 'Like already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        self.perform_create(serializer)
+        return Response({'success': True, 'data': serializer.data}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['delete'])
+    def unlike(self, request):
+        """DELETE /api/likes/unlike/"""
+        visitor_id = request.data.get('visitor')
+        property_id = request.data.get('property')
+        try:
+            like = Like.objects.get(visitor__id=visitor_id, property__id=property_id)
+            like.delete()
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            return Response({'error': 'Like not found'}, status=status.HTTP_404_NOT_FOUND)
+    def create(self, request, *args, **kwargs):
+        """POST /api/likes/ to create a like"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Check if like already exists
+        if Like.objects.filter(
+            visitor__id=request.data['visitor'],
+            property__id=request.data['property']
+        ).exists():
+            return Response(
+                {'error': 'Like already exists'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        self.perform_create(serializer)
+        return Response(
+            {'success': True, 'data': serializer.data},
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=['delete'])
+    def unlike(self, request):
+        """DELETE /api/likes/unlike/ with visitor/property in body"""
+        visitor_id = request.data.get('visitor')
+        property_id = request.data.get('property')
+
+        if not visitor_id or not property_id:
+            return Response(
+                {'error': 'Visitor and property IDs are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            like = Like.objects.get(visitor__id=visitor_id, property__id=property_id)
+            like.delete()
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            return Response(
+                {'error': 'Like not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 class BookingViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]

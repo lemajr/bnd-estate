@@ -25,12 +25,13 @@ class Visitor(models.Model):
         return self.username
 
 class Like(models.Model):
-    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE, related_name='likes')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('visitor', 'property')
+        indexes = [models.Index(fields=['visitor', 'property'])]
 
     def __str__(self):
         return f"{self.visitor.username} liked {self.property.title}"
