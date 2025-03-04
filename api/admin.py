@@ -20,7 +20,7 @@ class LikeAdmin(ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(ModelAdmin):
-    list_display = ('visitor', 'property', 'booking_date', 'created_at')
+    list_display = ('visitor', 'property', 'created_at')
     search_fields = ('visitor__username', 'property__title')
 
 @admin.register(Subscriber)

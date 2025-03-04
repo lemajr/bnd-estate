@@ -208,9 +208,66 @@ class LikeViewSet(viewsets.ModelViewSet):
             )
 
 class BookingViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+    def list(self, request, *args, **kwargs):
+        """GET /api/bookings/"""
+        visitor_id = request.query_params.get('visitor')
+        property_id = request.query_params.get('property')
+
+        if visitor_id and property_id:
+            return self.status(request)  # Redirect to status check
+        return super().list(request, *args, **kwargs)
+
+    @action(detail=False, methods=['get'])
+    def status(self, request):
+        """GET /api/bookings/status/?visitor=<id>&property=<id>"""
+        visitor_id = request.query_params.get('visitor')
+        property_id = request.query_params.get('property')
+
+        if not (visitor_id and property_id):
+            return Response({'error': 'Visitor and property IDs are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        exists = Booking.objects.filter(
+            visitor__id=visitor_id,
+            property__id=property_id
+        ).exists()
+        
+        return Response({'booked': exists}, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        """POST /api/bookings/ - Create a booking"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Prevent duplicate booking for the same visitor & property
+        if Booking.objects.filter(
+            visitor__id=request.data['visitor'],
+            property__id=request.data['property']
+        ).exists():
+            return Response({'error': 'Booking already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.perform_create(serializer)
+        return Response({'success': True, 'data': serializer.data}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['delete'])
+    def cancel(self, request):
+        """DELETE /api/bookings/cancel/"""
+        visitor_id = request.data.get('visitor')
+        property_id = request.data.get('property')
+
+        if not (visitor_id and property_id):
+            return Response({'error': 'Visitor and property IDs are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            booking = Booking.objects.get(visitor__id=visitor_id, property__id=property_id)
+            booking.delete()
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class SubscriberViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]  
